@@ -68,7 +68,7 @@ td.nm{font-family:var(--sans);font-size:12px;font-weight:500;max-width:200px;ove
 <div id="wrap">
 <nav>
 <div class="tab on" onclick="showTab('campanhas',this)">Campanhas</div>
-<div class="tab" onclick="showTab('adsets',this)">Adsets</div>
+<div class="tab" onclick="showTab('publicos',this)">Públicos</div>
 <div class="tab" onclick="showTab('anuncios',this)">Anúncios</div>
 <div class="tab" onclick="showTab('breakdowns',this)">Breakdowns</div>
 </nav>
@@ -95,7 +95,7 @@ td.nm{font-family:var(--sans);font-size:12px;font-weight:500;max-width:200px;ove
   <div class="sl">Recomendações</div>
   <div class="rg" id="rg-camp"></div>
 </div>
-<div class="pg" id="pg-adsets">
+<div class="pg" id="pg-publicos">
   <div class="sl">Conjuntos de Anúncios</div>
   <div class="fb">
     <button class="fn on" onclick="fsAds('all',this,'adset')">Todos</button>
@@ -192,7 +192,7 @@ function render(){
   renderCampaigns();
   renderRecs();
   populateCampSelects();
-  renderAdsets();
+  renderPúblicos();
   renderAds();
 }
 function renderKPIs(){
@@ -208,7 +208,7 @@ function renderKPIs(){
     {l:'CTR Médio',v:actr?actr.toFixed(2)+'%':'—',s:'taxa de clique',c:actr>=2?'g':actr>=1?'':'r'},
     {l:'CPC Médio',v:acpc?'R$ '+acpc.toFixed(2).replace('.',','):'—',s:'custo por clique',c:''},
     {l:'CPM Médio',v:acpm?'R$ '+acpm.toFixed(2).replace('.',','):'—',s:'por 1k impressões',c:''},
-    {l:'Adsets',v:(DATA.adsets||[]).length,s:'conjuntos',c:''},
+    {l:'Públicos',v:(DATA.publicos||[]).length,s:'conjuntos',c:''},
     {l:'Anúncios',v:(DATA.ads||[]).length,s:'criativos',c:''},
   ];
   document.getElementById('kg').innerHTML=kps.map(k=>'<div class="kp"><div class="kl">'+k.l+'</div><div class="kv '+k.c+'">'+k.v+'</div><div class="ks">'+k.s+'</div></div>').join('');
@@ -237,8 +237,8 @@ function renderCampaigns(){
     <td class="${cc(c.cpl,'cpl')}">${fmt(c.cpl,'r')}</td>
   </tr>`).join('');
 }
-function renderAdsets(){
-  let as=(DATA.adsets||[]).filter(a=>{
+function renderPúblicos(){
+  let as=(DATA.publicos||[]).filter(a=>{
     const ms=adsetF==='all'||a.status===adsetF;
     const mq=!adsetQ||a.name.toLowerCase().includes(adsetQ.toLowerCase());
     const mc=!adsetCamp||a.campaign_id===adsetCamp;
@@ -390,12 +390,12 @@ function fsCamp(s,b){campF=s;document.querySelectorAll('#pg-campanhas .fn').forE
 function fqCamp(v){campQ=v;renderCampaigns();}
 function stCamp(k){if(campSK===k)campSD*=-1;else{campSK=k;campSD=-1;}renderCampaigns();}
 function fsAds(s,b,type){
-  if(type==='adset'){adsetF=s;document.querySelectorAll('#pg-adsets .fn').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderAdsets();}
+  if(type==='adset'){adsetF=s;document.querySelectorAll('#pg-publicos .fn').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderPúblicos();}
   else{adF=s;document.querySelectorAll('#pg-anuncios .fn').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderAds();}
 }
-function fqAdset(v){adsetQ=v;renderAdsets();}
-function stAdset(k){if(adsetSK===k)adsetSD*=-1;else{adsetSK=k;adsetSD=-1;}renderAdsets();}
-function filterAdsetByCamp(v){adsetCamp=v;renderAdsets();}
+function fqAdset(v){adsetQ=v;renderPúblicos();}
+function stAdset(k){if(adsetSK===k)adsetSD*=-1;else{adsetSK=k;adsetSD=-1;}renderPúblicos();}
+function filterAdsetByCamp(v){adsetCamp=v;renderPúblicos();}
 function fqAd(v){adQ=v;renderAds();}
 function stAd(k){if(adSK===k)adSD*=-1;else{adSK=k;adSD=-1;}renderAds();}
 function filterAdByCamp(v){adCamp=v;renderAds();}
