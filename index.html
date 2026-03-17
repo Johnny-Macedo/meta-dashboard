@@ -476,3 +476,14 @@ renderAdsets = function() {
   });
 };
 </script>
+<script>
+function drillCamp(campId, campName) {
+  adsetCamp = campId;
+  document.getElementById('sel-camp-adset').value = campId;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  document.querySelector('nav .tab:nth-child(2)').classList.add('on');
+  document.getElementById('pg-adsets').classList.add('on');
+  _origRenderAdsets();
+}
+</script>
