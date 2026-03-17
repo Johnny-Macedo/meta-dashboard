@@ -403,3 +403,76 @@ document.getElementById('sel-camp-ag')?.addEventListener('change',e=>renderAgeGe
 document.getElementById('sel-camp-pl')?.addEventListener('change',e=>renderPlacement(e.target.value));
 load();
 </script></body></html>
+<script>
+function drillCamp(campId, campName) {
+  adsetCamp = campId;
+  adCamp = campId;
+  document.getElementById('sel-camp-adset').value = campId;
+  document.getElementById('sel-camp-ad').value = campId;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  const tab = document.querySelector('.tab:nth-child(2)');
+  if(tab) tab.classList.add('on');
+  document.getElementById('pg-adsets').classList.add('on');
+  renderAdsets();
+}
+function drillAdset(adsetId, adsetName) {
+  adCamp = '';
+  document.getElementById('sel-camp-ad').value = '';
+  const allAds = DATA.ads || [];
+  const filtered = allAds.filter(a => a.adset_id === adsetId);
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  const tab = document.querySelector('.tab:nth-child(3)');
+  if(tab) tab.classList.add('on');
+  document.getElementById('pg-anuncios').classList.add('on');
+  const tbody = document.getElementById('tb-ad');
+  document.getElementById('cl-ad').textContent = filtered.length + ' anúncio' + (filtered.length !== 1 ? 's' : '') + ' — ' + adsetName.substring(0,30);
+  tbody.innerHTML = filtered.length === 0 ? '<tr><td colspan="11" class="nd">Nenhum anúncio</td></tr>' : filtered.map(a => `<tr>
+    <td class="nm" title="${a.name}">${a.name}</td>
+    <td><span class="sb s${a.status}">${a.status}</span></td>
+    <td>${fmt(a.spend,'r')}</td><td>${fmt(a.impressions,'n')}</td><td>${fmt(a.clicks,'n')}</td>
+    <td class="${cc(a.ctr,'ctr')}">${fmt(a.ctr,'p')}</td>
+    <td class="${cc(a.cpc,'cpc')}">${fmt(a.cpc,'r')}</td>
+    <td>${fmt(a.cpm,'r')}</td>
+    <td class="${cc(a.frequency,'freq')}">${fmt(a.frequency,'d')}</td>
+    <td class="${a.leads>0?'mg':''}">${fmt(a.leads,'n')}</td>
+    <td class="${cc(a.cpl,'cpl')}">${fmt(a.cpl,'r')}</td>
+  </tr>`).join('');
+}
+const _origRenderCampaigns = renderCampaigns;
+renderCampaigns = function() {
+  _origRenderCampaigns();
+  const rows = document.querySelectorAll('#tb-camp tr');
+  const camps = (DATA.campaigns||[]).filter(c => {
+    const ms = campF==='all'||c.status===campF;
+    const mq = !campQ||c.name.toLowerCase().includes(campQ.toLowerCase());
+    return ms&&mq;
+  });
+  rows.forEach((row, i) => {
+    if(camps[i]) {
+      const btn = document.createElement('td');
+      btn.innerHTML = `<span onclick="drillCamp('${camps[i].id}','${camps[i].name.replace(/'/g,"\\'")}\')" style="cursor:pointer;font-family:var(--mono);font-size:10px;color:var(--ac);border:1px solid var(--ac);padding:2px 8px;">VER PÚBLICOS →</span>`;
+      row.appendChild(btn);
+    }
+  });
+};
+const _origRenderAdsets = renderAdsets;
+renderAdsets = function() {
+  _origRenderAdsets();
+  const as = (DATA.adsets||[]).filter(a => {
+    const ms = adsetF==='all'||a.status===adsetF;
+    const mq = !adsetQ||a.name.toLowerCase().includes(adsetQ.toLowerCase());
+    const mc = !adsetCamp||a.campaign_id===adsetCamp;
+    return ms&&mq&&mc;
+  });
+  const rows = document.querySelectorAll('#tb-adset tr');
+  rows.forEach((row, i) => {
+    if(as[i]) {
+      const btn = document.createElement('td');
+      btn.innerHTML = `<span onclick="drillAdset('${as[i].id}','${as[i].name.replace(/'/g,"\\'")}\')" style="cursor:pointer;font-family:var(--mono);font-size:10px;color:var(--ac);border:1px solid var(--ac);padding:2px 8px;">VER ADS →</span>`;
+      row.appendChild(btn);
+    }
+  });
+};
+</script>
