@@ -208,7 +208,7 @@ function renderKPIs(){
     {l:'CTR Médio',v:actr?actr.toFixed(2)+'%':'—',s:'taxa de clique',c:actr>=2?'g':actr>=1?'':'r'},
     {l:'CPC Médio',v:acpc?'R$ '+acpc.toFixed(2).replace('.',','):'—',s:'custo por clique',c:''},
     {l:'CPM Médio',v:acpm?'R$ '+acpm.toFixed(2).replace('.',','):'—',s:'por 1k impressões',c:''},
-    {l:'Públicos',v:(DATA.publicos||[]).length,s:'conjuntos',c:''},
+    {l:'Públicos',v:(DATA.adsets||[]).length,s:'conjuntos',c:''},
     {l:'Anúncios',v:(DATA.ads||[]).length,s:'criativos',c:''},
   ];
   document.getElementById('kg').innerHTML=kps.map(k=>'<div class="kp"><div class="kl">'+k.l+'</div><div class="kv '+k.c+'">'+k.v+'</div><div class="ks">'+k.s+'</div></div>').join('');
@@ -238,7 +238,7 @@ function renderCampaigns(){
   </tr>`).join('');
 }
 function renderPúblicos(){
-  let as=(DATA.publicos||[]).filter(a=>{
+  let as=(DATA.adsets||[]).filter(a=>{
     const ms=adsetF==='all'||a.status===adsetF;
     const mq=!adsetQ||a.name.toLowerCase().includes(adsetQ.toLowerCase());
     const mc=!adsetCamp||a.campaign_id===adsetCamp;
