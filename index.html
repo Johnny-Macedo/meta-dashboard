@@ -409,7 +409,7 @@ function fqAd(v){adQ=v;renderAd();}
 function stAd(k){if(adSK===k)adSD*=-1;else{adSK=k;adSD=-1;}renderAd();}
 
 async function runAI() {
-  const key = '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';
+  let key = localStorage.getItem('ak'); if(!key){key=prompt('Cole sua Anthropic API key:'); if(!key) return; localStorage.setItem('ak',key);}
   const panel = document.getElementById('ai-panel');
   const out = document.getElementById('ai-output');
   panel.classList.add('open');
