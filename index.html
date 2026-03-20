@@ -218,7 +218,7 @@ function render(){
   document.getElementById('wrap').style.display='block';
   document.getElementById('ts').textContent='Atualizado: '+new Date(D.generated_at).toLocaleString('pt-BR');
   renderKPIs();
-  window._data=data; renderCamp();
+  window._data=D; renderCamp();
   renderRecs();
   renderPub();
   renderAd();
