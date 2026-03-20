@@ -97,6 +97,11 @@ td.nm{font-family:var(--sans);font-size:12px;font-weight:500;max-width:200px;ove
     <th onclick="stCamp('cpl')">CPL</th><th></th>
   </tr></thead><tbody id="tb-camp"></tbody></table></div>
   <div class="sl">Recomendações</div>
+  <div class="fb" style="margin-bottom:12px">
+    <button class="fn on" id="rec-f-all" onclick="filterRecs('all',this)">TODAS</button>
+    <button class="fn" onclick="filterRecs('ACTIVE',this)">ATIVAS</button>
+    <button class="fn" onclick="filterRecs('PAUSED',this)">PAUSADAS</button>
+  </div>
   <div class="rg" id="rg-camp"></div>
 </div>
 <div class="pg" id="pg-publicos">
