@@ -66,14 +66,6 @@ td.nm{font-family:var(--sans);font-size:12px;font-weight:500;max-width:200px;ove
 .lr::after{content:'';position:absolute;top:0;left:-40px;width:40px;height:100%;background:var(--ac);animation:ld 1s linear infinite}
 @keyframes ld{to{left:40px}}
 #wrap{display:none}.nd{text-align:center;padding:32px;font-family:var(--mono);font-size:11px;color:var(--mt)}
-
-#ai-panel{display:none;position:fixed;top:0;right:0;width:420px;height:100vh;background:var(--s);border-left:1px solid var(--b);z-index:1000;overflow-y:auto;padding:24px;box-sizing:border-box}
-#ai-panel.open{display:block}
-#ai-close{cursor:pointer;float:right;font-size:18px;color:var(--mt)}
-#ai-output{margin-top:16px;font-size:13px;line-height:1.7;color:var(--mt);white-space:pre-wrap}
-#ai-btn{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;letter-spacing:.05em}
-#ai-btn:disabled{opacity:.5;cursor:not-allowed}
-#ai-key-input{background:var(--b);border:1px solid var(--b);color:var(--mt);padding:6px 10px;border-radius:4px;font-size:11px;width:100%;box-sizing:border-box;margin-bottom:8px}
 </style></head><body>
 <header><div class="logo">Meta Ads <span>/</span> TANOS T45 LC</div><div class="ts" id="ts">—</div></header>
 <div id="ld"><div class="lr"></div><div class="lt">carregando dados...</div></div>
@@ -221,7 +213,7 @@ function render(){
   document.getElementById('wrap').style.display='block';
   document.getElementById('ts').textContent='Atualizado: '+new Date(D.generated_at).toLocaleString('pt-BR');
   renderKPIs();
-  window._data = data; renderCamp();
+  renderCamp();
   renderRecs();
   renderPub();
   renderAd();
@@ -410,47 +402,6 @@ function stPub(k){if(pubSK===k)pubSD*=-1;else{pubSK=k;pubSD=-1;}renderPub();}
 function fsAd(s,b){adF=s;document.querySelectorAll('#pg-anuncios .fn').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderAd();}
 function fqAd(v){adQ=v;renderAd();}
 function stAd(k){if(adSK===k)adSD*=-1;else{adSK=k;adSD=-1;}renderAd();}
-async function runAI() {
-  const key = document.getElementById('ai-key-input').value.trim();
-  if (!key) { alert('Cole sua API key da Anthropic no campo acima'); return; }
-  const btn = document.getElementById('ai-btn');
-  const out = document.getElementById('ai-output');
-  btn.disabled = true;
-  btn.textContent = '⏳ Analisando...';
-  out.textContent = 'Processando dados...';
-  try {
-    const d = window._data;
-    const resumo = {
-      summary: d.summary,
-      campaigns: d.campaigns.map(c => ({
-        name: c.name, status: c.status,
-        spend: c.spend, leads: c.leads, cpl: c.cpl,
-        ctr: c.ctr, cpc: c.cpc, cpm: c.cpm, frequency: c.frequency
-      }))
-    };
-    const prompt = `Você é um especialista em Meta Ads. Analise estas campanhas e dê recomendações práticas e diretas:
-
-RESUMO: Gasto total R$${resumo.summary?.total_spend?.toFixed(2)}, Leads: ${resumo.summary?.total_leads}, CPL médio: R$${resumo.summary?.avg_cpl?.toFixed(2)}
-
-CAMPANHAS:
-${resumo.campaigns.map(c => `- ${c.name} [${c.status}] Gasto:R$${parseFloat(c.spend||0).toFixed(0)} Leads:${c.leads||0} CPL:R$${parseFloat(c.cpl||0).toFixed(2)} CTR:${parseFloat(c.ctr||0).toFixed(2)}% Freq:${parseFloat(c.frequency||0).toFixed(1)}`).join('\n')}
-
-Responda em português. Identifique: 1) O que está funcionando 2) O que pausar imediatamente 3) Onde escalar budget 4) Problemas críticos. Seja direto e específico com nomes de campanhas.`;
-
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})
-    });
-    const json = await res.json();
-    if (json.error) throw new Error(json.error.message);
-    out.textContent = json.content[0].text;
-  } catch(e) {
-    out.textContent = 'Erro: ' + e.message;
-  }
-  btn.disabled = false;
-  btn.textContent = '⚡ Analisar campanhas';
-}
 function filterRecs(status, btn) {
   document.querySelectorAll('.fn').forEach(x => x.classList.remove('on'));
   btn.classList.add('on');
