@@ -402,5 +402,13 @@ function stPub(k){if(pubSK===k)pubSD*=-1;else{pubSK=k;pubSD=-1;}renderPub();}
 function fsAd(s,b){adF=s;document.querySelectorAll('#pg-anuncios .fn').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderAd();}
 function fqAd(v){adQ=v;renderAd();}
 function stAd(k){if(adSK===k)adSD*=-1;else{adSK=k;adSD=-1;}renderAd();}
+function filterRecs(status, btn) {
+  document.querySelectorAll('.fn').forEach(x => x.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('#rg-camp .rc').forEach(card => {
+    const s = card.dataset.status || '';
+    card.style.display = (status === 'all' || s === status) ? '' : 'none';
+  });
+}
 load();
 </script></body></html>
