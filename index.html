@@ -376,7 +376,7 @@ function renderRecs(){
   const ord={h:0,m:1,l:2};
   const wr=cs.map(c=>({...c,rec:rec(c)})).sort((a,b)=>ord[a.rec.p]-ord[b.rec.p]);
   document.getElementById('rg-camp').innerHTML=wr.map(c=>`
-  <div class="rc p${c.rec.p}">
+  <div class="rc p${c.rec.p}" data-status="${c.status}">
     <div class="rh"><div class="rn">${c.name}</div><div class="rp">${c.rec.p==='h'?'Urgente':c.rec.p==='m'?'Atenção':'OK'}</div></div>
     <div class="rm">
       <div class="rml"><span class="rmll">Gasto</span><span class="rmlv">${c.spend?'R$'+c.spend.toFixed(0):'—'}</span></div>
