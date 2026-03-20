@@ -408,29 +408,48 @@ function fsAd(s,b){adF=s;document.querySelectorAll('#pg-anuncios .fn').forEach(x
 function fqAd(v){adQ=v;renderAd();}
 function stAd(k){if(adSK===k)adSD*=-1;else{adSK=k;adSD=-1;}renderAd();}
 
+
 async function runAI() {
-  let key = localStorage.getItem('ak'); if(!key){key=prompt('Cole sua Anthropic API key:'); if(!key) return; localStorage.setItem('ak',key);}
+  let key = localStorage.getItem('ak');
+  if (!key) {
+    key = prompt('Cole sua Anthropic API key:');
+    if (!key) return;
+    localStorage.setItem('ak', key);
+  }
   const panel = document.getElementById('ai-panel');
   const out = document.getElementById('ai-output');
   panel.classList.add('open');
   out.textContent = 'Analisando suas campanhas...';
   try {
     const d = window._data;
-    const camps = d.campaigns.map(c => c.name.slice(0,40)+' ['+c.status+'] Gasto:R$'+parseFloat(c.spend||0).toFixed(0)+' Leads:'+( c.leads||0)+' CPL:R$'+parseFloat(c.cpl||0).toFixed(2)+' CTR:'+parseFloat(c.ctr||0).toFixed(2)+'% Freq:'+parseFloat(c.frequency||0).toFixed(1)).join('
-');
-    const prompt = 'Voce e especialista em Meta Ads. Analise estas campanhas em portugues e seja direto:
-
-Gasto total: R$'+parseFloat(d.summary.total_spend||0).toFixed(2)+' | Leads: '+(d.summary.total_leads||0)+' | CPL medio: R$'+parseFloat(d.summary.avg_cpl||0).toFixed(2)+'
-
-CAMPANHAS:
-'+camps+'
-
-Responda em topicos: 1) Campanhas para pausar JA 2) Onde escalar budget 3) Problemas criticos 4) Oportunidades. Use os nomes reais das campanhas.';
-    const res = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
+    if (!d) { out.textContent = 'Dados nao carregados ainda. Aguarde e tente novamente.'; return; }
+    const camps = d.campaigns.map(c =>
+      c.name.slice(0,40) + ' [' + c.status + '] Gasto:R$' + parseFloat(c.spend||0).toFixed(0) +
+      ' Leads:' + (c.leads||0) + ' CPL:R$' + parseFloat(c.cpl||0).toFixed(2) +
+      ' CTR:' + parseFloat(c.ctr||0).toFixed(2) + '% Freq:' + parseFloat(c.frequency||0).toFixed(1)
+    ).join('\n');
+    const msg = 'Voce e especialista em Meta Ads. Analise em portugues, seja direto:\n\n' +
+      'Gasto total: R$' + parseFloat(d.summary.total_spend||0).toFixed(2) +
+      ' | Leads: ' + (d.summary.total_leads||0) +
+      ' | CPL medio: R$' + parseFloat(d.summary.avg_cpl||0).toFixed(2) +
+      '\n\nCAMPANHAS:\n' + camps +
+      '\n\nResponda em topicos: 1) Pausar JA 2) Escalar budget 3) Problemas criticos 4) Oportunidades. Use nomes reais.';
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1500, messages:[{role:'user', content:msg}]})
+    });
     const json = await res.json();
-    if(json.error) throw new Error(json.error.message);
+    if (json.error) throw new Error(json.error.message);
     out.textContent = json.content[0].text;
-  } catch(e) { out.textContent = 'Erro: '+e.message; }
+  } catch(e) {
+    out.textContent = 'Erro: ' + e.message;
+  }
 }
 function filterRecs(status, btn) {
   document.querySelectorAll('.fn').forEach(x => x.classList.remove('on'));
